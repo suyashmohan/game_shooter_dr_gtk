@@ -81,16 +81,15 @@ def update_player args
 end
 
 def update_bullets_enemies args
-    args.state.bullets.map! do |bullet|
+    args.state.bullets.each do |bullet|
         frame = args.state.tick_count.idiv(4).mod(3)
         bullet.y += bullet.dy
         bullet.tile_x = frame * 8
         bullet.sprite.x = bullet.x
         bullet.sprite.y = bullet.y
-        bullet
     end
 
-    args.state.enemies.map! do |enemy|
+    args.state.enemies.each do |enemy|
         frame = args.state.tick_count.idiv(10).mod(2)
         enemy.y += enemy.dy
         enemy.tile_y = frame * 8
@@ -109,8 +108,6 @@ def update_bullets_enemies args
             enemy.die = true
             LIVES -= 1
         end
-
-        enemy
     end
     
     if args.state.tick_count.mod(100) == 0
