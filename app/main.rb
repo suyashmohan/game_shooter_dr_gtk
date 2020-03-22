@@ -2,64 +2,13 @@ DEBUG = true
 SCALE = 4
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
+
 SCORE = 0
 LIVES = 3
 
-class BulletClass
-    attr_sprite
-    attr_accessor :dy, :die
-    def initialize (pos_x, pos_y)
-        @x = pos_x
-        @y = pos_y
-        @w = 8*SCALE
-        @h = 8*SCALE
-        @path = "sprites/pico8_invaders_sprites_LARGE.png"
-        @tile_x =  0
-        @tile_y =  8
-        @tile_w = 8
-        @tile_h = 8
-        @dy = 10
-        @die = false
-    end
-end
-
-class EnemyClass
-    attr_sprite
-    attr_accessor :dy, :die
-    def initialize
-        @x = rand(SCREEN_WIDTH-8*SCALE)
-        @y = SCREEN_HEIGHT-8*SCALE
-        @w = 8*SCALE
-        @h = 8*SCALE
-        @path = "sprites/pico8_invaders_sprites_LARGE.png"
-        @tile_x =  24
-        @tile_y =  0
-        @tile_w = 8
-        @tile_h = 8
-        @dy = -2
-        @die = false
-    end
-end
-
-class PlayerClass
-    attr_sprite
-    attr_accessor :vel_x, :vel_y, :accel, :max_vel 
-    def initialize
-        @x = (SCREEN_WIDTH-8*SCALE)/2
-        @y = 48
-        @w = 8*SCALE
-        @h = 8*SCALE
-        @path = "sprites/pico8_invaders_sprites_LARGE.png"
-        @tile_x =  0
-        @tile_y =  0
-        @tile_w = 8
-        @tile_h = 8
-        @vel_x = 0
-        @vel_y = 0
-        @accel = 0.1
-        @max_vel = 6
-    end
-end
+require 'app/enemy.rb'
+require 'app/bullet.rb'
+require 'app/player.rb'
 
 def tick args
     default args
@@ -106,7 +55,7 @@ def update args
 end
 
 def render args
-    args.outputs.solids << [0,0, SCREEN_WIDTH, SCREEN_HEIGHT, 0,0,0]
+    args.outputs.background_color = [0, 0, 0] # black background
 
     args.outputs.sprites <<  args.state.bullets.map do |bullet|
         bullet.sprite
@@ -164,7 +113,7 @@ def update_bullets_enemies args
         enemy
     end
     
-    if args.state.tick_count.mod(200) == 0
+    if args.state.tick_count.mod(100) == 0
         args.state.enemies << EnemyClass.new
     end
 end
