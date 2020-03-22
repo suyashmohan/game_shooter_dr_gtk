@@ -1,12 +1,13 @@
 DEBUG = true
 SCALE = 4
-
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
 SCORE = 0
 LIVES = 3
 
 class BulletClass
     attr_sprite
-    attr_accessor :dy
+    attr_accessor :dy, :die
     def initialize (pos_x, pos_y)
         @x = pos_x
         @y = pos_y
@@ -18,15 +19,16 @@ class BulletClass
         @tile_w = 8
         @tile_h = 8
         @dy = 10
+        @die = false
     end
 end
 
 class EnemyClass
     attr_sprite
-    attr_accessor :dy
+    attr_accessor :dy, :die
     def initialize
-        @x = rand(1280-8*SCALE)
-        @y = 720-8*SCALE
+        @x = rand(SCREEN_WIDTH-8*SCALE)
+        @y = SCREEN_HEIGHT-8*SCALE
         @w = 8*SCALE
         @h = 8*SCALE
         @path = "sprites/pico8_invaders_sprites_LARGE.png"
@@ -35,15 +37,15 @@ class EnemyClass
         @tile_w = 8
         @tile_h = 8
         @dy = -2
+        @die = false
     end
 end
-
 
 class PlayerClass
     attr_sprite
     attr_accessor :vel_x, :vel_y, :accel, :max_vel 
     def initialize
-        @x = (1280-8*SCALE)/2
+        @x = (SCREEN_WIDTH-8*SCALE)/2
         @y = 48
         @w = 8*SCALE
         @h = 8*SCALE
@@ -104,7 +106,7 @@ def update args
 end
 
 def render args
-    args.outputs.solids << [0,0, 1280, 720, 0,0,0]
+    args.outputs.solids << [0,0, SCREEN_WIDTH, SCREEN_HEIGHT, 0,0,0]
 
     args.outputs.sprites <<  args.state.bullets.map do |bullet|
         bullet.sprite
@@ -114,12 +116,12 @@ def render args
     end
     args.outputs.sprites << args.state.player.sprite
 
-    args.outputs.labels << [10, 720-10, "Score : #{SCORE}", 255, 0, 255]
-    args.outputs.labels << [10, 720-30, "Lives : #{LIVES}", 255, 0, 255]
+    args.outputs.labels << [10, SCREEN_HEIGHT-10, "Score : #{SCORE}", 255, 0, 255]
+    args.outputs.labels << [10, SCREEN_HEIGHT-30, "Lives : #{LIVES}", 255, 0, 255]
 
     if DEBUG
-        args.outputs.labels << [10, 720-50, "FPS : #{args.gtk.current_framerate.to_s.to_i} Ticks : #{args.state.tick_count}", 0, 255, 0]
-        args.outputs.labels << [10, 720-70, "Sprites : #{args.outputs.sprites.size}", 0, 255, 0]
+        args.outputs.labels << [10, SCREEN_HEIGHT-50, "FPS : #{args.gtk.current_framerate.to_s.to_i} Ticks : #{args.state.tick_count}", 0, 255, 0]
+        args.outputs.labels << [10, SCREEN_HEIGHT-70, "Sprites : #{args.outputs.sprites.size}", 0, 255, 0]
     end
 end
 
@@ -146,11 +148,19 @@ def update_bullets_enemies args
         enemy.sprite.x = enemy.x
         enemy.sprite.y = enemy.y
 
-        # TODO
-        #args.state.bullets.each do |b|
-            #collision = b.intersect_rect? e
-            #puts "Collision" if collision
-        #end
+        args.state.bullets.each do |bullet|
+            if bullet.intersect_rect? enemy
+                bullet.die = true
+                enemy.die = true
+                SCORE += 1
+            end
+        end
+
+        if enemy.intersect_rect? args.state.player
+            enemy.die = true
+            LIVES -= 1
+        end
+
         enemy
     end
     
@@ -160,13 +170,13 @@ def update_bullets_enemies args
 end
 
 def boundry_check args
-    args.state.player.x = args.state.player.x.greater(0).lesser(1280 - 8 * SCALE)
+    args.state.player.x = args.state.player.x.greater(0).lesser(SCREEN_WIDTH - 8 * SCALE)
 
     args.state.bullets = args.state.bullets.reject do |b|
-        b.y < 0 || b.y > 720 - 8 * SCALE
+        b.y < 0 || b.y > SCREEN_HEIGHT - 8 * SCALE || b.die == true
     end
 
     args.state.enemies = args.state.enemies.reject do |e|
-        e.y < 0 || e.y > 720 - 8 * SCALE
+        e.y < 0 || e.y > SCREEN_HEIGHT - 8 * SCALE || e.die == true
     end
 end
