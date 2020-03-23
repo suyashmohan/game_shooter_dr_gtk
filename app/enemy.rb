@@ -1,6 +1,7 @@
 class EnemyClass
     attr_sprite
     attr_accessor :dy, :die
+    
     def initialize
         @x = SCREEN_OFFSET + rand(SCREEN_WIDTH.idiv(8*SCALE)) * 8 * SCALE
         @y = SCREEN_HEIGHT-8*SCALE
@@ -13,5 +14,26 @@ class EnemyClass
         @tile_h = 8
         @dy = -2
         @die = false
+    end
+
+    def ticks args
+        frame = args.state.tick_count.idiv(10).mod(2)
+        @y += @dy
+        @tile_y = frame * 8
+        sprite.x = @x
+        sprite.y = @y
+
+        args.state.bullets.each do |bullet|
+            if bullet.intersect_rect? self
+                bullet.die = true
+                @die = true
+                args.state.score += 1
+            end
+        end
+
+        if intersect_rect? args.state.player
+            @die = true
+            args.state.lives -= 1
+        end
     end
 end
