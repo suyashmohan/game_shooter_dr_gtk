@@ -1,8 +1,8 @@
 DEBUG = true
-SCALE = 6
+SCALE = 4
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 720
-SCREEN_OFFSET = 280
+SCREEN_OFFSET = 280 # 720+280 = 1280
 
 require 'app/enemy.rb'
 require 'app/bullet.rb'
@@ -14,6 +14,7 @@ class Game
     def tick
         default
         update
+        input
         render
     end
 
@@ -37,6 +38,19 @@ class Game
         # Update Enemies
         state.enemies.each do |enemy|
             enemy.ticks(args)
+
+            state.bullets.each do |bullet|
+                if bullet.intersect_rect? enemy
+                    bullet.die = true
+                    enemy.die = true
+                    state.score += 1
+                end
+            end
+    
+            if enemy.intersect_rect? state.player
+                enemy.die = true
+                state.lives -= 1
+            end
         end
         
         # Remove unwanted bullets and enemies
@@ -50,6 +64,12 @@ class Game
         # Add new Enemies
         if state.tick_count.mod(30) == 0
             state.enemies << EnemyClass.new
+        end
+    end
+
+    def input
+        if inputs.keyboard.space and state.tick_count.mod(10) == 0
+            state.bullets << BulletClass.new(state.player.x, state.player.y)
         end
     end
     

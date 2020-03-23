@@ -22,18 +22,5 @@ class EnemyClass
         @tile_y = frame * 8
         sprite.x = @x
         sprite.y = @y
-
-        args.state.bullets.each do |bullet|
-            if bullet.intersect_rect? self
-                bullet.die = true
-                @die = true
-                args.state.score += 1
-            end
-        end
-
-        if intersect_rect? args.state.player
-            @die = true
-            args.state.lives -= 1
-        end
     end
 end

@@ -48,9 +48,5 @@ class PlayerClass
             @dy = -1
             @tile_x = 0 * 8
         end
-    
-        if args.inputs.keyboard.space and args.state.tick_count.mod(10) == 0
-            args.state.bullets << BulletClass.new(@x, @y)
-        end
     end
 end
