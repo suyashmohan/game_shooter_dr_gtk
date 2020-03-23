@@ -2,7 +2,7 @@ class EnemyClass
     attr_sprite
     attr_accessor :dy, :die
     def initialize
-        @x = rand(SCREEN_WIDTH-8*SCALE)
+        @x = SCREEN_OFFSET + rand(SCREEN_WIDTH.idiv(8*SCALE)) * 8 * SCALE
         @y = SCREEN_HEIGHT-8*SCALE
         @w = 8*SCALE
         @h = 8*SCALE

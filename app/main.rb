@@ -1,7 +1,8 @@
 DEBUG = true
-SCALE = 4
-SCREEN_WIDTH = 1280
+SCALE = 6
+SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 720
+SCREEN_OFFSET = 280
 
 SCORE = 0
 LIVES = 3
@@ -24,14 +25,23 @@ def default args
 end
 
 def input args
+    args.state.player.dx = 0
+    args.state.player.dy = 0
+    args.state.player.tile_x = 0 * 8
+
     if args.inputs.keyboard.left
         args.state.player.dx = -1
         args.state.player.tile_x = 1 * 8
     elsif args.inputs.keyboard.right
         args.state.player.dx = 1
         args.state.player.tile_x = 2 * 8
-    else
-        args.state.player.dx = 0
+    end
+
+    if args.inputs.keyboard.up
+        args.state.player.dy = 1
+        args.state.player.tile_x = 0 * 8
+    elsif args.inputs.keyboard.down
+        args.state.player.dy = -1
         args.state.player.tile_x = 0 * 8
     end
 
@@ -48,6 +58,8 @@ end
 
 def render args
     args.outputs.background_color = [0, 0, 0] # black background
+    args.outputs.solids << [0, 0, SCREEN_OFFSET, SCREEN_HEIGHT, 0, 0, 255]
+    args.outputs.solids << [SCREEN_WIDTH+SCREEN_OFFSET, 0, SCREEN_OFFSET, SCREEN_HEIGHT, 0, 0, 255]
 
     args.outputs.sprites <<  args.state.bullets.map do |bullet|
         bullet.sprite
@@ -68,6 +80,7 @@ end
 
 def update_player args
     args.state.player.x += args.state.player.dx * args.state.player.speed
+    args.state.player.y += args.state.player.dy * args.state.player.speed
     args.state.player.sprite.x = args.state.player.x
     args.state.player.sprite.y = args.state.player.y
 end
@@ -102,13 +115,14 @@ def update_bullets_enemies args
         end
     end
     
-    if args.state.tick_count.mod(100) == 0
+    if args.state.tick_count.mod(30) == 0
         args.state.enemies << EnemyClass.new
     end
 end
 
 def boundry_check args
-    args.state.player.x = args.state.player.x.greater(0).lesser(SCREEN_WIDTH - 8 * SCALE)
+    args.state.player.x = args.state.player.x.greater(SCREEN_OFFSET).lesser((SCREEN_OFFSET + SCREEN_WIDTH) - 8 * SCALE)
+    args.state.player.y = args.state.player.y.greater(0).lesser(SCREEN_HEIGHT - 8 * SCALE)
 
     args.state.bullets = args.state.bullets.reject do |b|
         b.y < 0 || b.y > SCREEN_HEIGHT - 8 * SCALE || b.die == true

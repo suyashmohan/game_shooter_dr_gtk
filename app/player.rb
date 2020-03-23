@@ -1,6 +1,6 @@
 class PlayerClass
     attr_sprite
-    attr_accessor :dx, :speed 
+    attr_accessor :dx, :dy, :speed 
     def initialize
         @x = (SCREEN_WIDTH-8*SCALE)/2
         @y = 48
@@ -12,6 +12,7 @@ class PlayerClass
         @tile_w = 8
         @tile_h = 8
         @dx = 0
+        @dy = 0
         @speed = 5
     end
 end
