@@ -25,22 +25,14 @@ end
 
 def input args
     if args.inputs.keyboard.left
-        args.state.player.vel_x -= args.state.player.accel
-        args.state.player.vel_x = args.state.player.vel_x.greater(-args.state.player.max_vel)
+        args.state.player.dx = -1
         args.state.player.tile_x = 1 * 8
     elsif args.inputs.keyboard.right
-        args.state.player.vel_x += args.state.player.accel
-        args.state.player.vel_x = args.state.player.vel_x.lesser(args.state.player.max_vel)
+        args.state.player.dx = 1
         args.state.player.tile_x = 2 * 8
     else
+        args.state.player.dx = 0
         args.state.player.tile_x = 0 * 8
-        if args.state.player.vel_x < 0
-            args.state.player.vel_x += args.state.player.accel
-            args.state.player.vel_x = args.state.player.vel_x.lesser(0)
-        else
-            args.state.player.vel_x -= args.state.player.accel
-            args.state.player.vel_x = args.state.player.vel_x.greater(0)
-        end
     end
 
     if args.inputs.keyboard.space and args.state.tick_count.mod(10) == 0
@@ -75,7 +67,7 @@ def render args
 end
 
 def update_player args
-    args.state.player.x += args.state.player.vel_x
+    args.state.player.x += args.state.player.dx * args.state.player.speed
     args.state.player.sprite.x = args.state.player.x
     args.state.player.sprite.y = args.state.player.y
 end
