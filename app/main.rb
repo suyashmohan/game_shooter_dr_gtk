@@ -68,7 +68,7 @@ class Game
     end
 
     def input
-        if inputs.keyboard.space and state.tick_count.mod(10) == 0
+        if keyboard.space and state.tick_count.mod(10) == 0
             state.bullets << BulletClass.new(state.player.x, state.player.y)
         end
     end
