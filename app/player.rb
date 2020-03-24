@@ -22,8 +22,8 @@ class PlayerClass
         @x += @dx * @speed
         @y += @dy * @speed
 
-        @x = @x.greater(SCREEN_OFFSET).lesser((SCREEN_OFFSET + SCREEN_WIDTH) - 8 * SCALE)
-        @y = @y.greater(0).lesser(SCREEN_HEIGHT - 8 * SCALE)
+        @x = @x.clamp(SCREEN_OFFSET, (SCREEN_OFFSET + SCREEN_WIDTH) - 8 * SCALE)
+        @y = @y.clamp(0, SCREEN_HEIGHT - 8 * SCALE)
     end
 
     def input args
