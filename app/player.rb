@@ -21,8 +21,6 @@ class PlayerClass
         input(args)
         @x += @dx * @speed
         @y += @dy * @speed
-        sprite.x = @x
-        sprite.y = @y
 
         @x = @x.greater(SCREEN_OFFSET).lesser((SCREEN_OFFSET + SCREEN_WIDTH) - 8 * SCALE)
         @y = @y.greater(0).lesser(SCREEN_HEIGHT - 8 * SCALE)

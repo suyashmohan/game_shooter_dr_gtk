@@ -20,7 +20,5 @@ class EnemyClass
         frame = args.state.tick_count.idiv(10).mod(2)
         @y += @dy
         @tile_y = frame * 8
-        sprite.x = @x
-        sprite.y = @y
     end
 end

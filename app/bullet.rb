@@ -20,7 +20,5 @@ class BulletClass
         frame = args.state.tick_count.idiv(4).mod(3)
         @y += @dy
         @tile_x = frame * 8
-        sprite.x = @x
-        sprite.y = @y
     end
 end
